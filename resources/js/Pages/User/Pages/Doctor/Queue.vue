@@ -53,10 +53,6 @@ const closeModal = () => {
     <Head title="Doctor Queue" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-2xl font-semibold leading-tight text-slate-900">Doctor Queue</h2>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div class="grid gap-4">
                 <article v-for="item in props.pendingAllocations" :key="item.id" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -67,9 +63,9 @@ const closeModal = () => {
                             <p class="mt-1 text-sm text-slate-500">Vitals score: {{ item.triage_record.computed_score }} · {{ item.triage_record.urgency_level }}</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700">Score {{ item.triage_record.computed_score }}</span>
+                            <span class="rounded-full bg-standard-bg px-3 py-1 text-xs font-semibold text-standard-text">Score {{ item.triage_record.computed_score }}</span>
                             <PrimaryButton @click="accept(item)">Accept</PrimaryButton>
-                            <button type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" @click="openOverride(item)">Override</button>
+                            <button type="button" class="rounded-lg border border-urgent-bg px-4 py-2 text-sm font-semibold text-urgent-text hover:bg-urgent-bg" @click="openOverride(item)">Override</button>
                         </div>
                     </div>
                 </article>

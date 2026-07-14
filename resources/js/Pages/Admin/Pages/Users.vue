@@ -55,10 +55,6 @@ const saveUser = (userId) => {
     <Head title="User Management" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-2xl font-semibold leading-tight text-slate-900">User Management</h2>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div class="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
                 <form class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" @submit.prevent="submit">
@@ -102,12 +98,8 @@ const saveUser = (userId) => {
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <tr v-for="user in props.users" :key="user.email">
-                                <td class="px-6 py-4">
-                                    <TextInput v-model="userForms[user.id].name" class="w-full" />
-                                </td>
-                                <td class="px-6 py-4">
-                                    <TextInput v-model="userForms[user.id].email" type="email" class="w-full" />
-                                </td>
+                                <td class="px-6 py-4"><TextInput v-model="userForms[user.id].name" class="w-full" /></td>
+                                <td class="px-6 py-4"><TextInput v-model="userForms[user.id].email" type="email" class="w-full" /></td>
                                 <td class="px-6 py-4">
                                     <select v-model="userForms[user.id].role_id" class="w-full rounded-lg border-slate-300">
                                         <option v-for="role in props.roles" :key="role.id" :value="role.id">{{ role.name }}</option>
@@ -116,7 +108,7 @@ const saveUser = (userId) => {
                                 <td class="px-6 py-4">
                                     <div class="flex flex-wrap gap-3">
                                         <button type="button" class="text-sm font-semibold text-slate-700 hover:text-slate-900" @click="saveUser(user.id)">Save</button>
-                                        <button type="button" class="text-sm font-semibold text-rose-600 hover:text-rose-700" @click="destroyUser(user)">Delete</button>
+                                        <button type="button" class="text-sm font-semibold text-critical-text hover:text-[#5e1717]" @click="destroyUser(user)">Delete</button>
                                     </div>
                                 </td>
                             </tr>

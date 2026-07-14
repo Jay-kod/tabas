@@ -31,10 +31,6 @@ const submit = () => {
     <Head title="Audit Log" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-2xl font-semibold leading-tight text-slate-900">Audit Log</h2>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -61,7 +57,7 @@ const submit = () => {
                     <div class="mt-4 space-y-3">
                         <div v-for="item in props.summary.topActions" :key="item.label" class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                             <span class="text-sm font-medium text-slate-700">{{ item.label }}</span>
-                            <span class="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">{{ item.count }}</span>
+                            <span class="rounded-full bg-brand-900 px-3 py-1 text-xs font-semibold text-white">{{ item.count }}</span>
                         </div>
                         <p v-if="!props.summary.topActions.length" class="text-sm text-slate-500">No actions to report yet.</p>
                     </div>
@@ -72,7 +68,7 @@ const submit = () => {
                     <div class="mt-4 space-y-3">
                         <div v-for="item in props.summary.subjectTypes" :key="item.label" class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                             <span class="text-sm font-medium text-slate-700">{{ item.label }}</span>
-                            <span class="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">{{ item.count }}</span>
+                            <span class="rounded-full bg-nonurgent-text px-3 py-1 text-xs font-semibold text-white">{{ item.count }}</span>
                         </div>
                         <p v-if="!props.summary.subjectTypes.length" class="text-sm text-slate-500">No subject types to report yet.</p>
                     </div>

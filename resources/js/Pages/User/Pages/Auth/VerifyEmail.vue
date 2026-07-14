@@ -1,5 +1,5 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
@@ -14,17 +14,22 @@ const form = useForm({});
 const submit = () => {
     form.post(route('verification.send'));
 };
-
 </script>
 
 <template>
-    <GuestLayout>
+    <AuthLayout
+        panel-badge="Email verification"
+        panel-title="Verify your email before you enter the triage workspace."
+        panel-description="This extra step keeps every patient record and bed allocation tied to a verified account."
+        :panel-points="['Open the verification email', 'Confirm your address', 'Return to the workflow dashboard']"
+        panel-callout="If the email is missing, resend the link and check your inbox again."
+    >
         <Head title="Verify Email" />
 
-        <div class="grid min-h-[calc(100vh-4rem)] gap-8 rounded-[2rem] border border-white/70 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 p-6 text-white shadow-2xl sm:p-10 lg:grid-cols-[1.1fr_0.9fr]">
+        <div class="grid min-h-[calc(100vh-4rem)] gap-8 rounded-[2rem] border border-white/70 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600 p-6 text-white shadow-2xl sm:p-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div class="flex flex-col justify-between gap-8">
                 <div>
-                    <p class="text-sm font-semibold uppercase tracking-[0.35em] text-sky-300">TABAS</p>
+                    <p class="text-sm font-semibold uppercase tracking-[0.35em] text-brand-50">TABAS</p>
                     <h1 class="mt-4 max-w-xl text-4xl font-semibold leading-tight sm:text-5xl">
                         Verify your email before you enter the triage workspace.
                     </h1>
@@ -51,13 +56,17 @@ const submit = () => {
 
             <div class="rounded-[1.75rem] border border-white/10 bg-white/10 p-6 backdrop-blur-xl sm:p-8">
                 <div class="rounded-3xl bg-white p-6 text-slate-900 shadow-xl">
-                    <div class="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-sky-700">
+                    <div class="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-brand-800">
                         Email verification required
                     </div>
 
                     <p class="mt-5 text-sm leading-6 text-slate-600">
                         Resend the verification message if needed, then click the link from your inbox to continue.
                     </p>
+
+                    <div v-if="status" class="mt-4 rounded-2xl border border-nonurgent-bg bg-nonurgent-bg px-4 py-3 text-sm text-nonurgent-text">
+                        {{ status }}
+                    </div>
 
                     <form class="mt-6" @submit.prevent="submit">
                         <div class="flex flex-col gap-3 sm:flex-row">
@@ -73,7 +82,7 @@ const submit = () => {
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
-                                class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                                class="inline-flex items-center justify-center rounded-2xl border border-brand-200 px-4 py-2 text-sm font-semibold text-brand-800 transition hover:border-brand-300 hover:bg-brand-50"
                             >
                                 Log out
                             </Link>
@@ -82,5 +91,5 @@ const submit = () => {
                 </div>
             </div>
         </div>
-    </GuestLayout>
+    </AuthLayout>
 </template>

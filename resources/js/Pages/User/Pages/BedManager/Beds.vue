@@ -32,9 +32,9 @@ props.wards.forEach((ward) => {
 
 const bedTone = (status) => {
     const map = {
-        vacant: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-        occupied: 'bg-slate-200 text-slate-700 ring-slate-300',
-        reserved: 'bg-amber-50 text-amber-700 ring-amber-200',
+        vacant: 'bg-nonurgent-bg text-nonurgent-text ring-nonurgent-bg',
+        occupied: 'bg-critical-bg text-critical-text ring-critical-bg',
+        reserved: 'bg-urgent-bg text-urgent-text ring-urgent-bg',
     };
 
     return map[status] ?? map.vacant;
@@ -62,10 +62,6 @@ const deleteBed = (bedId) => {
     <Head title="Bed Board" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-2xl font-semibold leading-tight text-slate-900">Bed Board</h2>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div class="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
                 <form class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" @submit.prevent="submitCreate">
@@ -122,7 +118,7 @@ const deleteBed = (bedId) => {
                                         <option value="reserved">Reserved</option>
                                     </select>
                                     <button type="button" class="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white" @click="updateBed(bed.id)">Save</button>
-                                    <button type="button" class="rounded-lg border border-rose-300 px-3 py-2 text-sm font-semibold text-rose-600" @click="deleteBed(bed.id)">Delete</button>
+                                    <button type="button" class="rounded-lg border border-critical-bg px-3 py-2 text-sm font-semibold text-critical-text" @click="deleteBed(bed.id)">Delete</button>
                                 </div>
                             </article>
                         </div>

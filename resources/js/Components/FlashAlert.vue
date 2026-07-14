@@ -29,24 +29,24 @@ const displayMessage = computed(() => {
 const palette = computed(() => {
     if (props.variant === 'danger') {
         return {
-            ring: 'ring-rose-200',
-            title: 'text-rose-700',
-            dot: 'bg-rose-500',
+            ring: 'ring-critical-bg',
+            title: 'text-critical-text',
+            dot: 'bg-critical-text',
         };
     }
 
     if (props.variant === 'warning') {
         return {
-            ring: 'ring-amber-200',
-            title: 'text-amber-700',
-            dot: 'bg-amber-500',
+            ring: 'ring-urgent-bg',
+            title: 'text-urgent-text',
+            dot: 'bg-urgent-text',
         };
     }
 
     return {
-        ring: 'ring-emerald-200',
-        title: 'text-emerald-700',
-        dot: 'bg-emerald-500',
+        ring: 'ring-nonurgent-bg',
+        title: 'text-brand-800',
+        dot: 'bg-brand-400',
     };
 });
 

@@ -16,7 +16,7 @@ class NursePatientController extends Controller
             ->latest()
             ->get();
 
-        return Inertia::render('Nurse/Patients', [
+        return Inertia::render('User/Pages/Nurse/Patients', [
             'triageRecords' => $triageRecords,
         ]);
     }

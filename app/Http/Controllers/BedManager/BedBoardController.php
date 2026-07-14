@@ -14,7 +14,7 @@ class BedBoardController extends Controller
 {
     public function index()
     {
-        return Inertia::render('BedManager/Beds', [
+        return Inertia::render('User/Pages/BedManager/Beds', [
             'wards' => Ward::with(['beds' => fn ($query) => $query->orderBy('bed_number')])->orderBy('name')->get(),
             'pendingAllocations' => Allocation::with(['triageRecord.patient', 'recommendedBed.ward'])
                 ->where('status', 'pending')

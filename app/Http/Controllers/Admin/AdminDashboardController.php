@@ -25,7 +25,7 @@ class AdminDashboardController extends Controller
             ->map(fn ($allocation) => $allocation->triageRecord->created_at->diffInMinutes($allocation->decided_at))
             ->avg() ?? 0;
 
-        return Inertia::render('Admin/Dashboard', [
+        return Inertia::render('Admin/Pages/Dashboard', [
             'metrics' => [
                 'patientsToday' => Patient::whereDate('created_at', $today)->count(),
                 'bedsOccupied' => Bed::where('status', 'occupied')->count(),

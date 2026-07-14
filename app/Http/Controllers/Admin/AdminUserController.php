@@ -15,7 +15,7 @@ class AdminUserController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Users', [
+        return Inertia::render('Admin/Pages/Users', [
             'users' => User::with('role')->orderBy('name')->get(),
             'roles' => Role::orderBy('name')->get(),
         ]);

@@ -11,13 +11,13 @@ const props = defineProps({
 
 const urgencyTone = (urgency) => {
     const map = {
-        Critical: 'bg-red-600 text-white',
-        Urgent: 'bg-orange-500 text-white',
-        Standard: 'bg-amber-400 text-slate-900',
-        'Non-urgent': 'bg-emerald-500 text-white',
+        Critical: 'bg-critical-bg text-critical-text',
+        Urgent: 'bg-urgent-bg text-urgent-text',
+        Standard: 'bg-standard-bg text-standard-text',
+        'Non-urgent': 'bg-nonurgent-bg text-nonurgent-text',
     };
 
-    return map[urgency] ?? 'bg-slate-200 text-slate-700';
+    return map[urgency] ?? 'bg-brand-50 text-brand-800';
 };
 </script>
 
@@ -25,10 +25,6 @@ const urgencyTone = (urgency) => {
     <Head title="Today's Patients" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-2xl font-semibold leading-tight text-slate-900">Today's Triage List</h2>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div v-if="props.triageRecords.length" class="grid gap-4">
                 <div v-for="record in props.triageRecords" :key="record.id" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -38,7 +34,7 @@ const urgencyTone = (urgency) => {
                             <p class="text-sm text-slate-500">{{ record.created_at }}</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">Score {{ record.computed_score }}</span>
+                            <span class="rounded-full bg-standard-bg px-3 py-1 text-xs font-semibold text-standard-text">Score {{ record.computed_score }}</span>
                             <span class="rounded-full px-3 py-1 text-xs font-semibold" :class="urgencyTone(record.urgency_level)">{{ record.urgency_level }}</span>
                         </div>
                     </div>

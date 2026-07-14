@@ -50,10 +50,6 @@ const saveWard = (wardId) => {
     <Head title="Wards" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-2xl font-semibold leading-tight text-slate-900">Wards</h2>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div class="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
                 <form class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" @submit.prevent="submit">
@@ -97,7 +93,7 @@ const saveWard = (wardId) => {
                         <p class="mt-1 text-sm text-slate-500">{{ ward.beds.length }} bed records created</p>
                         <div class="mt-4 flex flex-wrap gap-3">
                             <button type="button" class="text-sm font-semibold text-slate-700 hover:text-slate-900" @click="saveWard(ward.id)">Save</button>
-                            <button type="button" class="text-sm font-semibold text-rose-600 hover:text-rose-700" @click="destroyWard(ward)">Delete</button>
+                            <button type="button" class="text-sm font-semibold text-critical-text hover:text-[#5e1717]" @click="destroyWard(ward)">Delete</button>
                         </div>
                     </div>
                 </div>

@@ -35,10 +35,6 @@ const submit = () => {
     <Head title="New Triage" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-2xl font-semibold leading-tight text-slate-900">New Triage Intake</h2>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div class="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
                 <form class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" @submit.prevent="submit">
@@ -102,7 +98,7 @@ const submit = () => {
                 </form>
 
                 <aside class="rounded-3xl border border-slate-200 bg-slate-900 p-6 text-white shadow-sm">
-                    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">Live result</p>
+                    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-50">Live result</p>
                     <div v-if="triageResult" class="mt-4 space-y-3">
                         <div class="text-4xl font-semibold">{{ triageResult.score }}</div>
                         <div class="inline-flex rounded-full bg-white/10 px-3 py-1 text-sm font-semibold">{{ triageResult.category }}</div>

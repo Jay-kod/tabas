@@ -16,11 +16,28 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('Auth/Login', [
+        $roleKey = $request->route('role') ?? $request->query('role');
+        $roleMap = [
+            'triage-nurse' => [
+                'label' => 'Triage Nurse',
+                'description' => 'Use the triage workflow to record vitals and start allocations.',
+            ],
+            'bed-manager' => [
+                'label' => 'Bed Manager',
+                'description' => 'Review beds, manage capacity, and handle placement decisions.',
+            ],
+            'doctor' => [
+                'label' => 'Doctor',
+                'description' => 'Open the doctor queue to review pending allocations.',
+            ],
+        ];
+
+        return Inertia::render('User/Pages/Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
+            'roleContext' => $roleMap[$roleKey] ?? null,
         ]);
     }
 

@@ -20,10 +20,10 @@ const shortcuts = [
 ];
 
 const metricCards = [
-    { label: 'Patients today', value: props.metrics.patientsToday, tone: 'bg-sky-50 text-sky-700 ring-sky-200' },
-    { label: 'Beds occupied', value: props.metrics.bedsOccupied, tone: 'bg-teal-50 text-teal-700 ring-teal-200' },
-    { label: 'Beds vacant', value: props.metrics.bedsVacant, tone: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
-    { label: 'Pending allocations', value: props.metrics.pendingAllocations, tone: 'bg-amber-50 text-amber-700 ring-amber-200' },
+    { label: 'Patients today', value: props.metrics.patientsToday, tone: 'bg-brand-50 text-brand-800 ring-brand-100' },
+    { label: 'Beds occupied', value: props.metrics.bedsOccupied, tone: 'bg-standard-bg text-standard-text ring-standard-bg' },
+    { label: 'Beds vacant', value: props.metrics.bedsVacant, tone: 'bg-nonurgent-bg text-nonurgent-text ring-nonurgent-bg' },
+    { label: 'Pending allocations', value: props.metrics.pendingAllocations, tone: 'bg-urgent-bg text-urgent-text ring-urgent-bg' },
 ];
 </script>
 
@@ -31,16 +31,6 @@ const metricCards = [
     <Head title="Admin Dashboard" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">TABAS</p>
-                    <h2 class="text-2xl font-semibold leading-tight text-slate-900">Admin Dashboard</h2>
-                </div>
-                <p class="max-w-xl text-sm text-slate-500">Operational overview for the emergency department triage and bed allocation workflow.</p>
-            </div>
-        </template>
-
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div v-for="metric in metricCards" :key="metric.label" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -73,7 +63,7 @@ const metricCards = [
                             <p class="font-medium text-slate-900">{{ allocation.triage_record.patient.name }}</p>
                             <p class="text-sm text-slate-500">{{ allocation.recommended_bed?.ward?.name ?? 'No ward matched' }} · Bed {{ allocation.recommended_bed?.bed_number ?? '—' }}</p>
                         </div>
-                        <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Pending</span>
+                        <span class="rounded-full bg-urgent-bg px-3 py-1 text-xs font-semibold text-urgent-text">Pending</span>
                     </div>
                 </div>
                 <p v-else class="mt-4 text-sm text-slate-500">No pending recommendations right now.</p>

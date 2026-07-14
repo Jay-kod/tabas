@@ -13,7 +13,7 @@ class AdminWardController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Wards', [
+        return Inertia::render('Admin/Pages/Wards', [
             'wards' => Ward::withCount('beds')->with('beds')->orderBy('name')->get(),
         ]);
     }
