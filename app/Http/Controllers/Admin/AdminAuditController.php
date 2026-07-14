@@ -11,7 +11,7 @@ class AdminAuditController extends Controller
 {
     public function index(Request $request)
     {
-        $query = AuditLog::with('user')->latest();
+        $query = AuditLog::with('user');
 
         if ($request->filled('action')) {
             $query->where('action', 'like', '%'.$request->string('action').'%');
@@ -26,8 +26,28 @@ class AdminAuditController extends Controller
             });
         }
 
+        $visibleLogs = (clone $query)->latest()->limit(100)->get();
+
+        $summary = [
+            'matchingTotal' => (clone $query)->count(),
+            'visibleTotal' => $visibleLogs->count(),
+            'allocationEvents' => $visibleLogs->filter(fn ($log) => str_contains($log->action, 'allocation'))->count(),
+            'triageEvents' => $visibleLogs->filter(fn ($log) => str_contains($log->action, 'triage'))->count(),
+            'systemEvents' => $visibleLogs->whereNull('user_id')->count(),
+            'uniqueUsers' => $visibleLogs->pluck('user_id')->filter()->unique()->count(),
+            'subjectTypes' => $visibleLogs->groupBy('subject_type')->map->count()->sortDesc()->take(5)->map(fn ($count, $type) => [
+                'label' => class_basename($type),
+                'count' => $count,
+            ])->values(),
+            'topActions' => $visibleLogs->groupBy('action')->map->count()->sortDesc()->take(5)->map(fn ($count, $action) => [
+                'label' => $action,
+                'count' => $count,
+            ])->values(),
+        ];
+
         return Inertia::render('Admin/Audit', [
-            'auditLogs' => $query->limit(100)->get(),
+            'auditLogs' => $visibleLogs,
+            'summary' => $summary,
             'filters' => $request->only(['action', 'search']),
         ]);
     }
