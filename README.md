@@ -1,4 +1,4 @@
-<p align="center"><a href="#tabas-triage-and-bed-allocation-system"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="360" alt="Laravel Logo"></a></p>
+<p align="center"><a href="#tabas-triage-and-bed-allocation-system"><img src="public/tabas-banner.svg" width="900" alt="TABAS Banner"></a></p>
 
 <p align="center">
 <a href="https://github.com/Jay-kod/tabas"><img src="https://img.shields.io/badge/status-active-success" alt="Project Status"></a>
