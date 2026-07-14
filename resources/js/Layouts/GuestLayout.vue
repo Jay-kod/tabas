@@ -1,12 +1,19 @@
 <script setup>
+import { computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import FlashAlert from '@/Components/FlashAlert.vue';
 import { Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const flashStatus = computed(() => page.props.flash?.status ?? '');
 </script>
 
 <template>
     <div
         class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
     >
+        <FlashAlert :message="flashStatus" />
         <div>
             <Link href="/">
                 <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />

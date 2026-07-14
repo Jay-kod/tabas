@@ -35,6 +35,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user()?->loadMissing('role'),
             ],
             'flash' => [
+                'status' => fn () => $request->session()->get('status'),
                 'triageResult' => fn () => $request->session()->get('triageResult'),
                 'triageAllocation' => fn () => $request->session()->get('triageAllocation'),
             ],

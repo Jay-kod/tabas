@@ -1,17 +1,21 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import FlashAlert from '@/Components/FlashAlert.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
+const flashStatus = computed(() => page.props.flash?.status ?? '');
 </script>
 
 <template>
     <div>
+        <FlashAlert :message="flashStatus" />
         <div class="min-h-screen bg-gray-100">
             <nav
                 class="border-b border-slate-200 bg-white/95 backdrop-blur"
