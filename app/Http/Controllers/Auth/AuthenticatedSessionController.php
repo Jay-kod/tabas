@@ -19,7 +19,34 @@ class AuthenticatedSessionController extends Controller
     public function create(Request $request): Response
     {
         $roleKey = $request->route('role') ?? $request->query('role');
+        $demoAccounts = [
+            'admin' => [
+                'label' => 'Admin',
+                'email' => 'admin@tabas.test',
+                'password' => 'password',
+            ],
+            'triage-nurse' => [
+                'label' => 'Triage Nurse',
+                'email' => 'nurse@tabas.test',
+                'password' => 'password',
+            ],
+            'bed-manager' => [
+                'label' => 'Bed Manager',
+                'email' => 'bedmanager@tabas.test',
+                'password' => 'password',
+            ],
+            'doctor' => [
+                'label' => 'Doctor',
+                'email' => 'doctor@tabas.test',
+                'password' => 'password',
+            ],
+        ];
+
         $roleMap = [
+            'admin' => [
+                'label' => 'Admin',
+                'description' => 'Manage wards, users, and audit activity from the admin workspace.',
+            ],
             'triage-nurse' => [
                 'label' => 'Triage Nurse',
                 'description' => 'Use the triage workflow to record vitals and start allocations.',
@@ -38,6 +65,7 @@ class AuthenticatedSessionController extends Controller
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
             'roleContext' => $roleMap[$roleKey] ?? null,
+            'demoAccounts' => $demoAccounts,
         ]);
     }
 
@@ -64,6 +92,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }

@@ -2,12 +2,20 @@
 import { computed, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import FlashAlert from '@/Components/FlashAlert.vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 const flashStatus = computed(() => page.props.flash?.status ?? '');
 const currentUserRole = computed(() => page.props.auth.user?.role?.name ?? 'Guest');
 const mobileSidebarOpen = ref(false);
+const desktopSidebarOpen = ref(true);
+
+const confirmLogout = () => {
+    if (!window.confirm('Are you sure you want to log out?')) return;
+
+    mobileSidebarOpen.value = false;
+    router.post(route('logout'));
+};
 
 const pageMeta = computed(() => {
     const routeName = route().current() ?? 'dashboard';
@@ -30,13 +38,12 @@ const pageMeta = computed(() => {
 
 const navigation = computed(() => {
     const commonLinks = [
-        { label: 'Dashboard', href: route('dashboard'), active: 'dashboard', icon: 'home' },
-        { label: 'Profile', href: route('profile.edit'), active: 'profile.*', icon: 'user' },
+        { label: currentUserRole.value === 'Triage Nurse' ? 'Triage Dashboard' : 'Dashboard', href: route('dashboard'), active: 'dashboard', icon: 'home' },
     ];
 
     const roleLinks = {
         Admin: [
-            { label: 'Dashboard', href: route('admin.dashboard'), active: 'admin.dashboard', icon: 'grid' },
+            { label: 'Admin overview', href: route('admin.dashboard'), active: 'admin.dashboard', icon: 'grid' },
             { label: 'Users', href: route('admin.users'), active: 'admin.users*', icon: 'users' },
             { label: 'Wards', href: route('admin.wards'), active: 'admin.wards*', icon: 'building' },
             { label: 'Audit Log', href: route('admin.audit'), active: 'admin.audit*', icon: 'shield' },
@@ -84,33 +91,37 @@ const iconClasses = (name) => {
         <FlashAlert :message="flashStatus" />
 
         <div class="lg:flex lg:min-h-screen">
-            <aside class="hidden w-80 shrink-0 border-r border-brand-900 bg-brand-900 text-white lg:flex lg:flex-col">
-                <div class="flex h-20 items-center gap-3 border-b border-white/10 px-6">
+            <aside v-if="desktopSidebarOpen" id="desktop-sidebar" class="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-brand-900 bg-brand-900 text-white lg:flex lg:flex-col">
+                <div class="flex h-[76px] items-center gap-3 border-b border-white/10 px-5">
                     <Link :href="route('dashboard')" class="inline-flex items-center gap-3">
-                        <ApplicationLogo class="h-10 w-10 fill-current text-brand-50" />
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1">
+                            <ApplicationLogo class="h-full w-full" />
+                        </span>
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-brand-50">TABAS</p>
-                            <p class="text-sm text-slate-400">Workflow shell</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-brand-50">TABAS</p>
+                            <p class="mt-0.5 text-xs text-brand-50/65">Workflow shell</p>
                         </div>
                     </Link>
                 </div>
 
-                <div class="flex-1 px-4 py-6">
-                    <div class="rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
-                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Current role</p>
-                        <p class="mt-2 text-lg font-semibold text-white">{{ currentUserRole }}</p>
-                        <p class="mt-1 text-sm text-slate-300">{{ $page.props.auth.user?.name }}</p>
+                <div class="flex-1 overflow-y-auto px-3 py-5">
+                    <div class="border-l-2 border-brand-400 bg-white/[0.06] px-4 py-3">
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-50/60">Current role</p>
+                        <p class="mt-2 text-base font-semibold text-white">{{ currentUserRole }}</p>
+                        <p class="mt-0.5 truncate text-xs text-brand-50/70">{{ $page.props.auth.user?.name }}</p>
                     </div>
 
-                    <nav class="mt-6 space-y-2">
+                    <nav class="mt-7" aria-label="Workspace navigation">
+                        <p class="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-50/45">Workspace</p>
                         <Link
                             v-for="item in navigation"
                             :key="item.label"
                             :href="item.href"
-                            class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition"
-                            :class="isActive(item.active) ? 'bg-brand-400 text-brand-900 shadow-lg shadow-brand-400/20' : 'text-slate-300 hover:bg-white/8 hover:text-white'"
+                            :aria-current="isActive(item.active) ? 'page' : undefined"
+                            class="group relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-50"
+                            :class="isActive(item.active) ? 'bg-brand-400 text-brand-900' : 'text-brand-50/75 hover:bg-white/[0.08] hover:text-white'"
                         >
-                            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10" :class="isActive(item.active) ? 'bg-slate-950/10' : ''">
+                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white/10" :class="isActive(item.active) ? 'bg-brand-900/10' : 'group-hover:bg-white/10'">
                                 <svg viewBox="0 0 24 24" :class="iconClasses(item.icon)" aria-hidden="true">
                                     <path v-if="item.icon === 'home'" d="M12 3.2 3.5 10v10.5h6.5v-6.5h4v6.5h6.5V10L12 3.2Z" />
                                     <path v-else-if="item.icon === 'grid'" d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z" />
@@ -129,13 +140,17 @@ const iconClasses = (name) => {
                     </nav>
                 </div>
 
-                <div class="border-t border-white/10 p-4">
-                    <Link :href="route('profile.edit')" class="block rounded-2xl border border-white/10 px-4 py-3 text-sm text-slate-300 transition hover:bg-white/8 hover:text-white">
-                        Profile settings
+                <div class="border-t border-white/10 p-3">
+                    <Link :href="route('profile.edit')" class="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm text-brand-50/75 transition hover:bg-white/[0.08] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-50">
+                        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2" aria-hidden="true">
+                            <circle cx="12" cy="8" r="3.5" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0" />
+                        </svg>
+                        <span>Profile settings</span>
                     </Link>
-                    <Link :href="route('logout')" method="post" as="button" class="mt-3 block w-full rounded-2xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-900 transition hover:bg-brand-50/90">
+                    <button type="button" class="mt-2 block min-h-11 w-full rounded-lg bg-brand-50 px-4 py-2.5 text-left text-sm font-semibold text-brand-900 transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400" @click="confirmLogout">
                         Log out
-                    </Link>
+                    </button>
                 </div>
             </aside>
 
@@ -149,48 +164,108 @@ const iconClasses = (name) => {
                             </Link>
                         </div>
 
-                        <div class="hidden lg:block">
-                            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-brand-800">{{ pageMeta.title }}</p>
-                            <h1 class="mt-1 text-2xl font-semibold text-slate-950">{{ pageMeta.title }}</h1>
+                        <div class="hidden items-center gap-4 lg:flex">
+                            <button
+                                type="button"
+                                class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#c9ddd4] bg-white text-brand-800 transition hover:bg-brand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+                                :aria-label="desktopSidebarOpen ? 'Hide sidebar' : 'Show sidebar'"
+                                :aria-expanded="desktopSidebarOpen"
+                                aria-controls="desktop-sidebar"
+                                @click="desktopSidebarOpen = !desktopSidebarOpen"
+                            >
+                                <svg viewBox="0 0 24 24" class="h-5 w-5 fill-none stroke-current stroke-2" aria-hidden="true">
+                                    <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-brand-800">TABAS <span class="mx-1 text-brand-400">/</span> {{ currentUserRole }} workspace</p>
                         </div>
 
                         <div class="flex items-center gap-3 lg:hidden">
-                            <button type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700" @click="mobileSidebarOpen = !mobileSidebarOpen">
-                                Menu
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-brand-50 px-4 py-3 sm:px-6 lg:hidden">
-                        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-brand-800">{{ pageMeta.title }}</p>
-                        <h1 class="mt-1 text-xl font-semibold text-slate-950">{{ pageMeta.title }}</h1>
-                    </div>
-
-                    <div v-if="mobileSidebarOpen" class="border-t border-brand-900 bg-brand-900 px-4 py-4 text-white lg:hidden">
-                        <div class="space-y-2">
-                            <Link
-                                v-for="item in navigation"
-                                :key="`mobile-${item.label}`"
-                                :href="item.href"
-                                class="block rounded-2xl px-4 py-3 text-sm font-medium"
-                                :class="isActive(item.active) ? 'bg-brand-400 text-brand-900' : 'text-slate-300 hover:bg-white/8 hover:text-white'"
+                            <button
+                                type="button"
+                                class="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-[#c9ddd4] bg-white text-brand-800 shadow-sm transition hover:bg-brand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+                                :aria-label="mobileSidebarOpen ? 'Close navigation' : 'Open navigation'"
+                                :aria-expanded="mobileSidebarOpen"
+                                aria-controls="mobile-sidebar"
+                                @click="mobileSidebarOpen = !mobileSidebarOpen"
                             >
-                                {{ item.label }}
-                            </Link>
+                                <span class="relative block h-5 w-5" aria-hidden="true">
+                                    <span class="absolute left-0 top-1 block h-0.5 w-5 rounded bg-current transition-transform duration-200" :class="mobileSidebarOpen ? 'translate-y-1.5 rotate-45' : ''"></span>
+                                    <span class="absolute left-0 top-2.5 block h-0.5 w-5 rounded bg-current transition-opacity duration-200" :class="mobileSidebarOpen ? 'opacity-0' : ''"></span>
+                                    <span class="absolute left-0 top-4 block h-0.5 w-5 rounded bg-current transition-transform duration-200" :class="mobileSidebarOpen ? '-translate-y-1.5 -rotate-45' : ''"></span>
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </header>
 
+                <Transition
+                    enter-active-class="transition duration-200 ease-out"
+                    enter-from-class="opacity-0"
+                    enter-to-class="opacity-100"
+                    leave-active-class="transition duration-150 ease-in"
+                    leave-from-class="opacity-100"
+                    leave-to-class="opacity-0"
+                >
+                    <div v-if="mobileSidebarOpen" class="fixed inset-0 z-40 lg:hidden" @keydown.esc.window="mobileSidebarOpen = false">
+                        <button type="button" class="absolute inset-0 h-full w-full bg-brand-900/50 backdrop-blur-[2px]" aria-label="Close navigation" @click="mobileSidebarOpen = false"></button>
+                        <aside id="mobile-sidebar" class="absolute inset-y-0 left-0 flex w-[min(84vw,320px)] flex-col border-r border-white/10 bg-brand-900 text-white shadow-2xl shadow-brand-900/30">
+                            <div class="flex h-[76px] items-center justify-between border-b border-white/10 px-5">
+                                <Link :href="route('dashboard')" class="inline-flex items-center gap-3" @click="mobileSidebarOpen = false">
+                                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1">
+                                        <ApplicationLogo class="h-full w-full" />
+                                    </span>
+                                    <span>
+                                        <span class="block text-xs font-semibold uppercase tracking-[0.3em] text-brand-50">TABAS</span>
+                                        <span class="mt-0.5 block text-xs text-brand-50/65">Workflow shell</span>
+                                    </span>
+                                </Link>
+                                <button type="button" class="flex h-10 w-10 items-center justify-center rounded-lg text-brand-50/75 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-50" aria-label="Close navigation" @click="mobileSidebarOpen = false">
+                                    <svg viewBox="0 0 24 24" class="h-5 w-5 fill-none stroke-current stroke-2" aria-hidden="true"><path stroke-linecap="round" d="m6 6 12 12M18 6 6 18" /></svg>
+                                </button>
+                            </div>
+
+                            <div class="border-b border-white/10 px-4 py-5">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-50/60">Current role</p>
+                                <p class="mt-2 text-base font-semibold">{{ currentUserRole }}</p>
+                                <p class="mt-0.5 truncate text-xs text-brand-50/70">{{ $page.props.auth.user?.name }}</p>
+                            </div>
+
+                            <nav class="flex-1 overflow-y-auto px-3 py-5" aria-label="Mobile workspace navigation">
+                                <p class="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-50/45">Workspace</p>
+                                <Link
+                                    v-for="item in navigation"
+                                    :key="`mobile-${item.label}`"
+                                    :href="item.href"
+                                    :aria-current="isActive(item.active) ? 'page' : undefined"
+                                    class="mb-1 flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-50"
+                                    :class="isActive(item.active) ? 'bg-brand-400 text-brand-900' : 'text-brand-50/75 hover:bg-white/[0.08] hover:text-white'"
+                                    @click="mobileSidebarOpen = false"
+                                >
+                                    {{ item.label }}
+                                </Link>
+                            </nav>
+
+                            <div class="border-t border-white/10 p-3">
+                                <Link :href="route('profile.edit')" class="block min-h-11 rounded-lg px-3 py-3 text-sm text-brand-50/75 transition hover:bg-white/[0.08] hover:text-white" @click="mobileSidebarOpen = false">Profile settings</Link>
+                                <button type="button" class="mt-2 block min-h-11 w-full rounded-lg bg-brand-50 px-4 py-2.5 text-left text-sm font-semibold text-brand-900 transition hover:bg-white" @click="confirmLogout">Log out</button>
+                            </div>
+                        </aside>
+                    </div>
+                </Transition>
+
                 <main class="flex-1">
                     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                        <div class="mb-6 rounded-[1.75rem] border border-brand-50 bg-white p-5 shadow-sm">
-                            <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                                <div>
-                                    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-brand-800">{{ pageMeta.title }}</p>
-                                    <h2 class="mt-1 text-2xl font-semibold text-slate-950">{{ pageMeta.title }}</h2>
+                        <div class="mb-6 rounded-md border border-brand-50 bg-white p-5 shadow-sm">
+                            <slot name="header">
+                                <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                                    <div>
+                                        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-brand-800">{{ pageMeta.title }}</p>
+                                        <h2 class="mt-1 text-2xl font-semibold text-slate-950">{{ pageMeta.title }}</h2>
+                                    </div>
+                                    <p class="max-w-2xl text-sm leading-6 text-slate-500">{{ pageMeta.description }}</p>
                                 </div>
-                                <p class="max-w-2xl text-sm leading-6 text-slate-500">{{ pageMeta.description }}</p>
-                            </div>
+                            </slot>
                         </div>
 
                         <slot />

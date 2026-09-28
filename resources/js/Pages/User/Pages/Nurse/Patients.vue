@@ -39,6 +39,10 @@ const urgencyTone = (urgency) => {
                         </div>
                     </div>
 
+                    <div class="mt-4 rounded-2xl bg-slate-50 p-3 text-sm text-slate-700">
+                        <span class="font-semibold text-slate-900">Presenting complaint:</span> {{ record.presenting_complaint ?? 'Not recorded' }}
+                    </div>
+
                     <div class="mt-4 grid gap-3 text-sm text-slate-600 md:grid-cols-2 xl:grid-cols-4">
                         <div>Resp rate: {{ record.resp_rate }}</div>
                         <div>SpO2: {{ record.spo2 }}</div>

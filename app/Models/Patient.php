@@ -18,6 +18,12 @@ class Patient extends Model
         'contact',
     ];
 
+    protected $casts = [
+        'name' => 'encrypted',
+        'hospital_id' => 'encrypted',
+        'contact' => 'encrypted',
+    ];
+
     public function triageRecords(): HasMany
     {
         return $this->hasMany(TriageRecord::class);

@@ -14,6 +14,7 @@ class TriageRecord extends Model
     protected $fillable = [
         'patient_id',
         'nurse_id',
+        'presenting_complaint',
         'resp_rate',
         'spo2',
         'systolic_bp',

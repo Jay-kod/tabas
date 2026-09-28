@@ -27,10 +27,10 @@ class DatabaseSeeder extends Seeder
         $roles = Role::pluck('id', 'name');
 
         $users = [
-            ['name' => 'TABAS Admin', 'email' => 'admin@tabas.test', 'role' => 'Admin'],
-            ['name' => 'Amina Yusuf', 'email' => 'nurse@tabas.test', 'role' => 'Triage Nurse'],
-            ['name' => 'David Okafor', 'email' => 'bedmanager@tabas.test', 'role' => 'Bed Manager'],
-            ['name' => 'Dr. Chidi Nwosu', 'email' => 'doctor@tabas.test', 'role' => 'Doctor'],
+            ['name' => 'TABAS Admin', 'email' => 'admin@tabas.test', 'role' => 'Admin', 'password' => 'password'],
+            ['name' => 'Amina Yusuf', 'email' => 'nurse@tabas.test', 'role' => 'Triage Nurse', 'password' => 'password'],
+            ['name' => 'David Okafor', 'email' => 'bedmanager@tabas.test', 'role' => 'Bed Manager', 'password' => 'password'],
+            ['name' => 'Dr. Chidi Nwosu', 'email' => 'doctor@tabas.test', 'role' => 'Doctor', 'password' => 'password'],
         ];
 
         foreach ($users as $userData) {
@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
                 ['email' => $userData['email']],
                 [
                     'name' => $userData['name'],
-                    'password' => Hash::make('password'),
+                    'password' => Hash::make($userData['password'] ?? 'password'),
                     'role_id' => $roles[$userData['role']] ?? null,
                 ]
             );
@@ -71,11 +71,13 @@ class DatabaseSeeder extends Seeder
         $demoCases = [
             [
                 'patient' => ['name' => 'Jane Doe', 'age' => 36, 'sex' => 'Female', 'hospital_id' => 'TABAS-001', 'contact' => '08030000001'],
+                'presenting_complaint' => 'Severe chest pain and hypoxia',
                 'vitals' => ['resp_rate' => 32, 'spo2' => 89, 'systolic_bp' => 82, 'heart_rate' => 138, 'consciousness' => 'U', 'temperature' => 39.4],
                 'ward_specialization' => 'General',
             ],
             [
                 'patient' => ['name' => 'Aminu Bala', 'age' => 51, 'sex' => 'Male', 'hospital_id' => 'TABAS-002', 'contact' => '08030000002'],
+                'presenting_complaint' => 'Worsening abdominal discomfort',
                 'vitals' => ['resp_rate' => 18, 'spo2' => 97, 'systolic_bp' => 122, 'heart_rate' => 84, 'consciousness' => 'A', 'temperature' => 36.7],
                 'ward_specialization' => 'General',
             ],
@@ -94,6 +96,7 @@ class DatabaseSeeder extends Seeder
                     ['patient_id' => $patient->id],
                     [
                         'nurse_id' => $nurse->id,
+                        'presenting_complaint' => $demoCase['presenting_complaint'],
                         ...$demoCase['vitals'],
                         'computed_score' => $score['score'],
                         'urgency_level' => $score['category'],

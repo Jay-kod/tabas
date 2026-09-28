@@ -7,76 +7,62 @@ import { Link, usePage } from '@inertiajs/vue3';
 const page = usePage();
 const flashStatus = computed(() => page.props.flash?.status ?? '');
 
-const roleCards = [
-    {
-        title: 'Admin',
-        description: 'Manage users, wards, audits, and the overall system flow.',
-    },
-    {
-        title: 'Triage Nurse',
-        description: 'Record vitals, score patients, and trigger allocation recommendations.',
-    },
-    {
-        title: 'Bed Manager',
-        description: 'Accept or override bed placements and keep ward capacity accurate.',
-    },
-    {
-        title: 'Doctor',
-        description: 'Review the pending allocation queue and follow up on cases.',
-    },
-];
+defineProps({
+    panelBadge: { type: String, default: 'Secure access' },
+    panelTitle: { type: String, default: 'One workspace for every TABAS role.' },
+    panelDescription: { type: String, default: 'A clearer view of patient flow, from first assessment to the right bed.' },
+    panelPoints: { type: Array, default: () => [] },
+    panelCallout: { type: String, default: '' },
+});
 </script>
 
 <template>
-    <div class="relative min-h-screen overflow-hidden bg-brand-900 text-white">
-        <div class="pointer-events-none absolute inset-0">
-            <div class="absolute left-0 top-0 h-80 w-80 rounded-full bg-brand-400/20 blur-3xl"></div>
-            <div class="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-brand-50/10 blur-3xl"></div>
-        </div>
-
+    <div class="min-h-screen bg-[#f4f8f6] text-slate-900 lg:grid lg:grid-cols-[minmax(360px,0.88fr)_1.12fr]">
         <FlashAlert :message="flashStatus" />
 
-        <div class="relative mx-auto grid min-h-screen max-w-7xl gap-8 px-4 py-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
-            <div class="flex min-h-[calc(100vh-3rem)] flex-col justify-center">
-                <div class="mb-6 flex items-center justify-between gap-4">
-                    <Link href="/" class="inline-flex items-center gap-3">
-                        <ApplicationLogo class="h-12 w-12 fill-current text-brand-50" />
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-brand-50">TABAS</p>
-                            <p class="text-sm text-slate-400">Triage and Bed Allocation System</p>
-                        </div>
-                    </Link>
-                </div>
+        <aside class="relative isolate overflow-hidden bg-brand-900 px-6 py-7 text-white sm:px-10 sm:py-9 lg:flex lg:min-h-screen lg:flex-col lg:justify-between lg:px-14 lg:py-12">
+            <div class="pointer-events-none absolute inset-0 -z-10 opacity-[0.12]" style="background-image: linear-gradient(rgba(225,245,238,0.28) 1px, transparent 1px), linear-gradient(90deg, rgba(225,245,238,0.28) 1px, transparent 1px); background-size: 48px 48px;"></div>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-brand-800/80 to-transparent"></div>
 
-                <div class="rounded-[2rem] border border-brand-50/70 bg-white p-6 text-slate-900 shadow-2xl shadow-slate-950/30 sm:p-8 lg:p-10">
-                    <slot />
+            <div class="flex items-center gap-3">
+                <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-white p-1.5 shadow-sm">
+                    <ApplicationLogo class="h-full w-full" />
+                </span>
+                <div>
+                    <p class="text-lg font-bold leading-tight tracking-wide">TABAS</p>
+                    <p class="mt-0.5 text-xs text-brand-50/75">Emergency care coordination</p>
                 </div>
             </div>
 
-            <aside class="flex min-h-[calc(100vh-3rem)] items-center">
-                <div class="w-full rounded-[2rem] border border-white/10 bg-white/10 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-xl sm:p-8 lg:p-10">
-                    <p class="text-sm font-semibold uppercase tracking-[0.35em] text-brand-50">Secure access</p>
-                    <h1 class="mt-4 max-w-xl text-4xl font-semibold leading-tight sm:text-5xl">One workspace for every TABAS role.</h1>
-                    <p class="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-                        Sign in with your role account, keep the remember-me option on for trusted devices, and use the same login area for all system users.
-                    </p>
+            <div class="my-10 max-w-xl lg:my-auto lg:py-16">
+                <p class="inline-flex items-center gap-2 rounded-full border border-brand-50/25 bg-brand-50/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-brand-50">
+                    <span class="h-1.5 w-1.5 rounded-full bg-[#8CE0B9]"></span>
+                    {{ panelBadge }}
+                </p>
+                <h2 class="mt-7 max-w-lg text-4xl font-semibold leading-[1.08] text-white sm:text-5xl" style="font-family: Georgia, 'Times New Roman', serif;">
+                    {{ panelTitle }}
+                </h2>
+                <p class="mt-5 max-w-md text-base leading-7 text-brand-50/80">
+                    {{ panelDescription }}
+                </p>
 
-                    <div class="mt-8 grid gap-4 sm:grid-cols-2">
-                        <div
-                            v-for="card in roleCards"
-                            :key="card.title"
-                            class="rounded-2xl border border-white/10 bg-white/5 p-4"
-                        >
-                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{{ card.title }}</p>
-                            <p class="mt-2 text-sm leading-6 text-slate-200">{{ card.description }}</p>
-                        </div>
-                    </div>
+                <ul v-if="panelPoints.length" class="mt-9 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                    <li v-for="(point, index) in panelPoints" :key="point" class="flex items-center gap-3 text-sm text-brand-50/90">
+                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-brand-50/30 text-[11px] font-semibold text-brand-50">0{{ index + 1 }}</span>
+                        {{ point }}
+                    </li>
+                </ul>
+            </div>
 
-                    <div class="mt-8 rounded-2xl border border-brand-400/20 bg-brand-400/10 p-4 text-sm leading-6 text-brand-50">
-                        Demo accounts are seeded with the same password: password.
-                    </div>
-                </div>
-            </aside>
-        </div>
+            <div v-if="panelCallout" class="max-w-md border-l-2 border-brand-400 pl-4 text-sm leading-6 text-brand-50/75">
+                {{ panelCallout }}
+            </div>
+        </aside>
+
+        <main class="flex min-h-[70vh] items-center justify-center px-6 py-12 sm:px-10 lg:min-h-screen lg:px-12 xl:px-20">
+            <div class="w-full max-w-[460px]">
+                <slot />
+            </div>
+        </main>
     </div>
 </template>

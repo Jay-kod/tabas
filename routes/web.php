@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:Admin')
         ->name('admin.audit');
 
-    Route::get('/nurse/triage/new', fn () => Inertia::render('Nurse/Triage/New'))
+    Route::get('/nurse/triage/new', fn () => Inertia::render('User/Pages/Nurse/Triage/New'))
         ->middleware('role:Triage Nurse')
         ->name('nurse.triage.new');
 

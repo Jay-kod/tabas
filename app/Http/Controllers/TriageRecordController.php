@@ -33,6 +33,7 @@ class TriageRecordController extends Controller
             return TriageRecord::create([
                 'patient_id' => $patient->id,
                 'nurse_id' => $request->user()->id,
+                'presenting_complaint' => $request->string('presenting_complaint')->toString(),
                 'resp_rate' => $request->integer('resp_rate'),
                 'spo2' => $request->integer('spo2'),
                 'systolic_bp' => $request->integer('systolic_bp'),

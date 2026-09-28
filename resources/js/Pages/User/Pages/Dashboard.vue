@@ -26,6 +26,8 @@ const roleShortcutMap = {
 };
 
 const roleShortcuts = roleShortcutMap[page.props.auth.user?.role?.name] ?? [];
+const currentRole = page.props.auth.user?.role?.name ?? 'Unassigned';
+const currentUser = page.props.auth.user?.name ?? 'Staff account';
 </script>
 
 <template>
@@ -42,31 +44,36 @@ const roleShortcuts = roleShortcutMap[page.props.auth.user?.role?.name] ?? [];
             </div>
         </template>
 
-        <div class="grid gap-6 lg:grid-cols-2">
-            <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Quick links</p>
-                <div class="mt-5 space-y-3">
-                    <Link v-for="item in [...roleShortcuts, ...shortcuts]" :key="item.label" :href="item.href" class="block rounded-2xl border border-brand-100 px-4 py-4 transition hover:border-brand-200 hover:bg-brand-50">
-                        <p class="font-semibold text-slate-900">{{ item.label }}</p>
-                        <p class="mt-1 text-sm text-slate-500">{{ item.description }}</p>
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(240px,0.65fr)]">
+            <section aria-labelledby="quick-access-title">
+                <div class="flex items-baseline justify-between border-b border-[#c9ddd4] pb-3">
+                    <h3 id="quick-access-title" class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-800">Quick access</h3>
+                    <span class="text-xs text-slate-500">{{ roleShortcuts.length + shortcuts.length }} links</span>
+                </div>
+                <nav class="mt-1" aria-label="Workspace shortcuts">
+                    <Link
+                        v-for="item in [...roleShortcuts, ...shortcuts]"
+                        :key="item.label"
+                        :href="item.href"
+                        class="group flex items-center justify-between gap-4 border-b border-[#dce9e3] px-3 py-4 transition hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-400"
+                    >
+                        <span>
+                            <span class="block font-semibold text-slate-900">{{ item.label }}</span>
+                            <span class="mt-1 block text-sm text-slate-500">{{ item.description }}</span>
+                        </span>
+                        <span class="shrink-0 text-xs font-semibold text-brand-700 group-hover:text-brand-900">Open</span>
                     </Link>
-                </div>
-            </div>
+                </nav>
+            </section>
 
-            <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Today at a glance</p>
-                <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                    <div class="rounded-2xl bg-slate-50 p-4">
-                        <p class="text-sm font-medium text-slate-700">Current role</p>
-                        <p class="mt-1 text-xl font-semibold text-slate-900">{{ page.props.auth.user?.role?.name ?? 'Unassigned' }}</p>
-                    </div>
-                    <div class="rounded-2xl bg-slate-50 p-4">
-                        <p class="text-sm font-medium text-slate-700">Account</p>
-                        <p class="mt-1 text-xl font-semibold text-slate-900">{{ page.props.auth.user?.name }}</p>
-                    </div>
-                </div>
-                <p class="mt-5 text-sm leading-6 text-slate-500">This dashboard acts as the fast entry point to the correct role workspace after login.</p>
-            </div>
+            <aside class="border-t-2 border-brand-600 pt-4" aria-labelledby="account-summary-title">
+                <h3 id="account-summary-title" class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-800">Signed-in account</h3>
+                <p class="mt-5 text-2xl font-semibold text-slate-950">{{ currentUser }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ currentRole }}</p>
+                <p class="mt-6 border-l-2 border-brand-400 pl-3 text-sm leading-6 text-slate-600">
+                    Your workspace links are tailored to your assigned role. Use the navigation to move between tasks.
+                </p>
+            </aside>
         </div>
     </AuthenticatedLayout>
 </template>

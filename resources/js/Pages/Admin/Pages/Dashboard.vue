@@ -20,10 +20,10 @@ const shortcuts = [
 ];
 
 const metricCards = [
-    { label: 'Patients today', value: props.metrics.patientsToday, tone: 'bg-brand-50 text-brand-800 ring-brand-100' },
-    { label: 'Beds occupied', value: props.metrics.bedsOccupied, tone: 'bg-standard-bg text-standard-text ring-standard-bg' },
-    { label: 'Beds vacant', value: props.metrics.bedsVacant, tone: 'bg-nonurgent-bg text-nonurgent-text ring-nonurgent-bg' },
-    { label: 'Pending allocations', value: props.metrics.pendingAllocations, tone: 'bg-urgent-bg text-urgent-text ring-urgent-bg' },
+    { label: 'Patients today', value: props.metrics.patientsToday, tone: 'border-brand-600 text-brand-800' },
+    { label: 'Beds occupied', value: props.metrics.bedsOccupied, tone: 'border-standard-text text-standard-text' },
+    { label: 'Beds vacant', value: props.metrics.bedsVacant, tone: 'border-nonurgent-text text-nonurgent-text' },
+    { label: 'Pending allocations', value: props.metrics.pendingAllocations, tone: 'border-urgent-text text-urgent-text' },
 ];
 </script>
 
@@ -31,42 +31,58 @@ const metricCards = [
     <Head title="Admin Dashboard" />
 
     <AuthenticatedLayout>
-        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div v-for="metric in metricCards" :key="metric.label" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div :class="['inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset', metric.tone]">
-                        {{ metric.label }}
-                    </div>
-                    <div class="mt-4 text-3xl font-semibold text-slate-900">{{ metric.value }}</div>
+        <div>
+            <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Current system metrics">
+                <div v-for="metric in metricCards" :key="metric.label" class="rounded-md border border-slate-200 border-l-4 bg-white px-4 py-4 shadow-sm" :class="metric.tone">
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{{ metric.label }}</p>
+                    <p class="mt-3 text-3xl font-semibold tabular-nums text-slate-950">{{ metric.value }}</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-slate-900">Average time to placement</h3>
-                <p class="mt-2 text-3xl font-semibold text-slate-900">{{ props.metrics.averagePlacementMinutes }} min</p>
-                <p class="mt-1 text-sm text-slate-500">Based on accepted allocations made today.</p>
-            </div>
-
-            <div class="mt-8 grid gap-6 lg:grid-cols-3">
-                <Link v-for="shortcut in shortcuts" :key="shortcut.title" :href="shortcut.href" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Navigate</p>
-                    <h3 class="mt-2 text-xl font-semibold text-slate-900">{{ shortcut.title }}</h3>
-                    <p class="mt-2 text-sm text-slate-600">{{ shortcut.description }}</p>
-                </Link>
-            </div>
-
-            <div class="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-slate-900">Pending recommendations</h3>
-                <div v-if="props.latestPendingAllocations.length" class="mt-4 divide-y divide-slate-100">
-                    <div v-for="allocation in props.latestPendingAllocations" :key="allocation.id" class="flex flex-wrap items-center justify-between gap-4 py-4">
+            <div class="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1.6fr)_minmax(260px,0.7fr)]">
+                <section class="min-w-0" aria-labelledby="pending-title">
+                    <div class="flex flex-wrap items-end justify-between gap-3 border-b border-[#c9ddd4] pb-3">
                         <div>
-                            <p class="font-medium text-slate-900">{{ allocation.triage_record.patient.name }}</p>
-                            <p class="text-sm text-slate-500">{{ allocation.recommended_bed?.ward?.name ?? 'No ward matched' }} · Bed {{ allocation.recommended_bed?.bed_number ?? '—' }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-brand-700">Needs attention</p>
+                            <h3 id="pending-title" class="mt-1 text-xl font-semibold text-slate-950">Pending recommendations</h3>
                         </div>
-                        <span class="rounded-full bg-urgent-bg px-3 py-1 text-xs font-semibold text-urgent-text">Pending</span>
+                        <span class="text-sm text-slate-500">{{ props.latestPendingAllocations.length }} waiting</span>
                     </div>
-                </div>
-                <p v-else class="mt-4 text-sm text-slate-500">No pending recommendations right now.</p>
+
+                    <div v-if="props.latestPendingAllocations.length" class="divide-y divide-[#dce9e3]">
+                        <div v-for="allocation in props.latestPendingAllocations" :key="allocation.id" class="grid gap-2 py-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+                            <div class="min-w-0">
+                                <p class="truncate font-semibold text-slate-900">{{ allocation.triage_record.patient.name }}</p>
+                                <p class="mt-1 text-xs uppercase tracking-wide text-slate-500">Patient</p>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="truncate text-sm text-slate-700">{{ allocation.recommended_bed?.ward?.name ?? 'No ward matched' }}</p>
+                                <p class="mt-1 text-xs text-slate-500">Bed {{ allocation.recommended_bed?.bed_number ?? 'Not assigned' }}</p>
+                            </div>
+                            <span class="w-fit border-l-2 border-urgent-text bg-urgent-bg px-2.5 py-1 text-xs font-semibold text-urgent-text">Pending</span>
+                        </div>
+                    </div>
+                    <p v-else class="py-6 text-sm text-slate-500">No pending recommendations right now.</p>
+                </section>
+
+                <aside class="space-y-8">
+                    <section class="rounded-md bg-brand-900 p-5 text-white" aria-labelledby="placement-time-title">
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-brand-50/75">Today's throughput</p>
+                        <h3 id="placement-time-title" class="mt-3 text-sm font-medium text-brand-50">Average time to placement</h3>
+                        <p class="mt-1 text-3xl font-semibold tabular-nums">{{ props.metrics.averagePlacementMinutes }} <span class="text-base font-medium text-brand-50/80">min</span></p>
+                        <p class="mt-3 text-xs leading-5 text-brand-50/70">Based on accepted allocations made today.</p>
+                    </section>
+
+                    <section aria-labelledby="admin-links-title">
+                        <h3 id="admin-links-title" class="border-b border-[#c9ddd4] pb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-800">Administration</h3>
+                        <nav class="mt-1" aria-label="Administrative links">
+                            <Link v-for="shortcut in shortcuts" :key="shortcut.title" :href="shortcut.href" class="block border-b border-[#dce9e3] px-2 py-3 transition hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-400">
+                                <span class="block font-semibold text-slate-900">{{ shortcut.title }}</span>
+                                <span class="mt-1 block text-sm text-slate-500">{{ shortcut.description }}</span>
+                            </Link>
+                        </nav>
+                    </section>
+                </aside>
             </div>
         </div>
     </AuthenticatedLayout>

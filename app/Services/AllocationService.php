@@ -13,17 +13,12 @@ class AllocationService
 {
     public function recommend(TriageRecord $triageRecord, ?string $specialization = null): ?Allocation
     {
-        $wardSpecialization = $specialization ?: 'General';
+        $wardSpecialization = trim((string) ($specialization ?: ($triageRecord->ward_specialization ?? 'General')));
+        $preferredSpecializations = $this->preferredWardOrder($wardSpecialization, $triageRecord->urgency_level ?? 'Standard');
 
-        $bed = Bed::query()
-            ->where('status', 'vacant')
-            ->whereHas('ward', function ($query) use ($wardSpecialization) {
-                $query->where('specialization', $wardSpecialization)
-                    ->orWhere('name', $wardSpecialization);
-            })
-            ->orderBy('bed_number')
-            ->first()
-            ?? Bed::query()->where('status', 'vacant')->orderBy('bed_number')->first();
+        $bed = $this->findVacantBed($preferredSpecializations)
+            ?? $this->findVacantBed(['General'])
+            ?? $this->findVacantBed();
 
         $allocation = Allocation::create([
             'triage_record_id' => $triageRecord->id,
@@ -92,5 +87,44 @@ class AllocationService
 
             return $allocation;
         });
+    }
+
+    private function preferredWardOrder(string $wardSpecialization, ?string $urgency): array
+    {
+        $normalized = array_values(array_filter(array_map(fn ($value) => trim((string) $value), [$wardSpecialization, 'General']), fn ($value) => $value !== ''));
+        $normalized = array_values(array_unique($normalized));
+
+        if (in_array(strtoupper((string) $urgency), ['CRITICAL', 'URGENT'], true)) {
+            return $normalized;
+        }
+
+        return array_values(array_unique(array_merge(['General'], array_diff($normalized, ['General']))));
+    }
+
+    private function findVacantBed(array $preferredSpecializations = []): ?Bed
+    {
+        if (empty($preferredSpecializations)) {
+            return Bed::query()
+                ->where('status', 'vacant')
+                ->orderBy('bed_number')
+                ->first();
+        }
+
+        foreach ($preferredSpecializations as $specialization) {
+            $bed = Bed::query()
+                ->where('status', 'vacant')
+                ->whereHas('ward', function ($query) use ($specialization) {
+                    $query->where('specialization', $specialization)
+                        ->orWhere('name', $specialization);
+                })
+                ->orderBy('bed_number')
+                ->first();
+
+            if ($bed) {
+                return $bed;
+            }
+        }
+
+        return null;
     }
 }

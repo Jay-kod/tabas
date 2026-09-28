@@ -20,6 +20,12 @@ defineProps({
 
 const portals = [
     {
+        title: 'Admin',
+        description: 'Open the admin workspace to review users, wards, and audit activity.',
+        href: route('login.role', 'admin'),
+        accent: 'from-violet-500 to-indigo-500',
+    },
+    {
         title: 'Triage Nurse',
         description: 'Open the triage workspace, record vitals, and generate a score.',
         href: route('login.role', 'triage-nurse'),
@@ -130,11 +136,11 @@ const portals = [
                             <h3 class="mt-2 text-2xl font-semibold">Choose the login page for your role</h3>
                         </div>
                         <p class="hidden max-w-xl text-sm leading-6 text-slate-400 md:block">
-                            Admin login is intentionally excluded from this public role list.
+                            Every seeded demo account uses the same password: password.
                         </p>
                     </div>
 
-                    <div class="grid gap-4 lg:grid-cols-3">
+                    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                         <Link
                             v-for="portal in portals"
                             :key="portal.title"

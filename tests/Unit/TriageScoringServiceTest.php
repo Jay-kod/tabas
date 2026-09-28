@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Services\TriageScoringService;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class TriageScoringServiceTest extends TestCase
@@ -39,5 +40,32 @@ class TriageScoringServiceTest extends TestCase
 
         $this->assertGreaterThanOrEqual(9, $result['score']);
         $this->assertSame('Critical', $result['category']);
+    }
+
+    public function test_it_rejects_missing_required_values(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        (new TriageScoringService())->score([
+            'resp_rate' => 18,
+            'spo2' => 97,
+            'systolic_bp' => 120,
+            'heart_rate' => 80,
+            'temperature' => 36.8,
+        ]);
+    }
+
+    public function test_it_rejects_invalid_consciousness_values(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        (new TriageScoringService())->score([
+            'resp_rate' => 18,
+            'spo2' => 97,
+            'systolic_bp' => 120,
+            'heart_rate' => 80,
+            'consciousness' => 'X',
+            'temperature' => 36.8,
+        ]);
     }
 }

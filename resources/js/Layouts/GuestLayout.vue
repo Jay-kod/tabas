@@ -11,7 +11,7 @@ const flashStatus = computed(() => page.props.flash?.status ?? '');
 
 <template>
     <div
-        class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
+        class="flex min-h-[99vh] flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
     >
         <FlashAlert :message="flashStatus" />
         <div>

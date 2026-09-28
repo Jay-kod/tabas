@@ -53,4 +53,58 @@ class AllocationServiceTest extends TestCase
             'subject_id' => $allocation->id,
         ]);
     }
+
+    public function test_it_prefers_general_capacity_for_lower_urgency_cases_when_specialized_wards_are_available(): void
+    {
+        $generalWard = Ward::create(['name' => 'General Ward', 'specialization' => 'General', 'total_beds' => 1]);
+        $surgicalWard = Ward::create(['name' => 'Surgical Ward', 'specialization' => 'Surgery', 'total_beds' => 1]);
+
+        $generalBed = Bed::create(['ward_id' => $generalWard->id, 'bed_number' => 'Z-99', 'status' => 'vacant']);
+        Bed::create(['ward_id' => $surgicalWard->id, 'bed_number' => 'A-01', 'status' => 'vacant']);
+
+        $patient = Patient::create(['name' => 'Stable Patient']);
+        $triageRecord = TriageRecord::create([
+            'patient_id' => $patient->id,
+            'nurse_id' => User::factory()->create(['role_id' => Role::firstOrCreate(['name' => 'Triage Nurse'])->id])->id,
+            'resp_rate' => 16,
+            'spo2' => 98,
+            'systolic_bp' => 120,
+            'heart_rate' => 78,
+            'consciousness' => 'A',
+            'temperature' => 36.8,
+            'computed_score' => 0,
+            'urgency_level' => 'Non-urgent',
+        ]);
+
+        $allocation = (new AllocationService())->recommend($triageRecord, 'Surgery');
+
+        $this->assertSame($generalBed->id, $allocation->recommended_bed_id);
+    }
+
+    public function test_it_persists_presenting_complaint_when_creating_a_triage_record(): void
+    {
+        $nurse = User::factory()->create(['role_id' => Role::firstOrCreate(['name' => 'Triage Nurse'])->id]);
+        $this->actingAs($nurse);
+
+        $response = $this->post(route('triage-records.store'), [
+            'patient_name' => 'Patricia Smith',
+            'patient_age' => 42,
+            'patient_sex' => 'Female',
+            'patient_hospital_id' => 'TABAS-111',
+            'patient_contact' => '08000000011',
+            'presenting_complaint' => 'Shortness of breath',
+            'ward_specialization' => 'General',
+            'resp_rate' => 24,
+            'spo2' => 91,
+            'systolic_bp' => 96,
+            'heart_rate' => 120,
+            'consciousness' => 'A',
+            'temperature' => 37.2,
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('triage_records', [
+            'presenting_complaint' => 'Shortness of breath',
+        ]);
+    }
 }

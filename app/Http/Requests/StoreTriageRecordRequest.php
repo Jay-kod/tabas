@@ -27,12 +27,13 @@ class StoreTriageRecordRequest extends FormRequest
             'patient_sex' => ['nullable', 'string', 'max:20'],
             'patient_hospital_id' => ['nullable', 'string', 'max:100'],
             'patient_contact' => ['nullable', 'string', 'max:100'],
+            'presenting_complaint' => ['required', 'string', 'min:3', 'max:1000'],
             'ward_specialization' => ['nullable', 'string', 'max:100'],
             'resp_rate' => ['required', 'integer', 'min:0', 'max:100'],
             'spo2' => ['required', 'integer', 'min:0', 'max:100'],
             'systolic_bp' => ['required', 'integer', 'min:0', 'max:300'],
             'heart_rate' => ['required', 'integer', 'min:0', 'max:250'],
-            'consciousness' => ['required', 'string', 'max:20'],
+            'consciousness' => ['required', 'string', 'in:A,V,P,U'],
             'temperature' => ['required', 'numeric', 'min:30', 'max:45'],
         ];
     }

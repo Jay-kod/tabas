@@ -1,7 +1,7 @@
 <script setup>
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     status: {
@@ -13,6 +13,12 @@ const form = useForm({});
 
 const submit = () => {
     form.post(route('verification.send'));
+};
+
+const confirmLogout = () => {
+    if (window.confirm('Are you sure you want to log out?')) {
+        router.post(route('logout'));
+    }
 };
 </script>
 
@@ -78,14 +84,13 @@ const submit = () => {
                                 Resend verification email
                             </PrimaryButton>
 
-                            <Link
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
+                            <button
+                                type="button"
                                 class="inline-flex items-center justify-center rounded-2xl border border-brand-200 px-4 py-2 text-sm font-semibold text-brand-800 transition hover:border-brand-300 hover:bg-brand-50"
+                                @click="confirmLogout"
                             >
                                 Log out
-                            </Link>
+                            </button>
                         </div>
                     </form>
                 </div>
